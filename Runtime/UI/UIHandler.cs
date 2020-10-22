@@ -32,49 +32,49 @@ namespace Nox.Core
 			return screenStack.Count > 0 ? screenStack.Peek().GetType() : null;
 		}
 
-		public void Show(Type screenType, float upDelay = 0)
+		public void Show<T>() where T : UILayer
+		{
+			Type screenType = typeof(T);
+			Show(screenType);
+		}
+
+		private void Show(Type screenType)
+		{
+			UILayer newScreen = availableScreens[screenType];
+			if (screenStack.Count != 0 && newScreen.hidePrevious)
+				TakeScreenDown(screenStack.Peek());
+			screenStack.Push(newScreen);
+			StartCoroutine(PutScreenUp(newScreen));
+		}
+
+		public void DelayedShow<T>(float delay) where T : UILayer
+		{
+			Type screenType = typeof(T);
+			DelayedShow(screenType, delay);
+		}
+
+		private void DelayedShow(Type screenType, float delay)
 		{
 			UILayer newScreen = availableScreens[screenType];
 			//Check if the stack is not empty
 			if (screenStack.Count != 0 && newScreen.hidePrevious)
 				TakeScreenDown(screenStack.Peek());
 			screenStack.Push(newScreen);
-			StartCoroutine(DelayedUp(newScreen, upDelay));
+			StartCoroutine(DelayedUp(newScreen, delay));
 		}
 
-		public void Show<T>(float upDelay = 0) where T : UILayer
-		{
-			Type screenType = typeof(T);
-			Show(screenType, upDelay);
-		}
-
-		public void ImmediateShow(Type screenType)
-		{
-			UILayer newScreen = availableScreens[screenType];
-			if (screenStack.Count != 0 && newScreen.hidePrevious)
-				TakeScreenDown(screenStack.Peek());
-			screenStack.Push(newScreen);
-			PutScreenUp(newScreen);
-		}
-
-		public void ImmediateShow<T>() where T : UILayer
-		{
-			Type screenType = typeof(T);
-			ImmediateShow(screenType);
-		}
-
-		public void Hide(float downDelay = 0, float upDelay = 0)
-		{
-			StartCoroutine(DelayedDown(screenStack.Pop(), downDelay));
-			if (screenStack.Count == 0) return;
-			StartCoroutine(DelayedUp(screenStack.Peek(), upDelay));
-		}
-
-		public void ImmediateHide()
+		public void Hide()
 		{
 			TakeScreenDown(screenStack.Pop());
 			if (screenStack.Count == 0) return;
-			PutScreenUp(screenStack.Peek());
+			StartCoroutine(PutScreenUp(screenStack.Peek()));
+		}
+
+		public void DelayedHide(float delay)
+		{
+			StartCoroutine(DelayedDown(screenStack.Pop(), delay));
+			if (screenStack.Count == 0) return;
+			StartCoroutine(PutScreenUp(screenStack.Peek()));
 		}
 
 		public bool ScreenIsUp(Type screenType)
@@ -95,16 +95,18 @@ namespace Nox.Core
 			screen.OnScreenDown();
 		}
 
-		private void PutScreenUp(UILayer screen)
+		private IEnumerator PutScreenUp(UILayer screen)
 		{
 			screen.gameObject.SetActive(true);
 			screen.OnScreenUp();
+			yield return null; //Wait a frame so when screens run OnScreenUpAndReady they can actually use coroutines
+			screen.OnScreenUpAndReady();
 		}
 
 		private IEnumerator DelayedUp(UILayer screen, float delay)
 		{
 			yield return new WaitForSeconds(delay);
-			PutScreenUp(screen);
+			StartCoroutine(PutScreenUp(screen));
 		}
 
 		private IEnumerator DelayedDown(UILayer screen, float delay)

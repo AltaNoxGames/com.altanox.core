@@ -18,6 +18,9 @@ namespace Nox.Core
 		//making an ugly loop
 		//Gets called every time a screen is shown
 		public virtual void OnScreenUp() { }
+
+		//Gets called one frame after OnScreenUp so coroutines can run
+		public virtual void OnScreenUpAndReady() { }
 		//Gets called every time a screen gets hidden
 		public virtual void OnScreenDown() { }
 
@@ -26,6 +29,6 @@ namespace Nox.Core
 
 		// Many screens have a back button so a method for that is included in this class to avoid rewriting it
 		// in every child class
-		public virtual void Back() { handler.ImmediateHide(); }
+		public virtual void Back() { handler.Hide(); }
 	}
 }
