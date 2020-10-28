@@ -1,6 +1,8 @@
 {
     "name": "altanox.editor.core",
-    "references": [],
+    "references": [
+        "GUID:bcc55d3d967c71f4898fcd3da9501797"
+    ],
     "includePlatforms": [
         "Editor"
     ],

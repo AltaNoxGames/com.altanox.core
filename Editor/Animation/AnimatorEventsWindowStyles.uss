@@ -1,0 +1,17 @@
+﻿.Header
+{
+    font-size:16px;
+    -unity-text-align: middle-center;
+}
+
+.Hide
+{
+    display:none;
+}
+
+.Icon
+{
+    align-self:center;
+    max-width: 32px;
+    max-height: 32px;
+}
