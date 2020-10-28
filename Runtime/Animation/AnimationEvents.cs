@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Nox.Core.Animation
 {
-	[ExecuteAlways]
 	public class AnimationEvents : StateMachineBehaviour
 	{
 		[Serializable]
