@@ -16,7 +16,9 @@ namespace Nox.Core
 			{
 				Type screenType = screens[i].GetType();
 				availableScreens.Add(screenType, screens[i]);
-				screens[i].gameObject.SetActive(false);
+
+				if(!screens[i].overrideActivation)
+					screens[i].gameObject.SetActive(false);
 				screens[i].handler = this;
 			}
 

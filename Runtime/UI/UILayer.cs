@@ -6,6 +6,7 @@ namespace Nox.Core
 	{
 		public UIHandler handler { protected get; set; }
 
+		public bool overrideActivation;
 		//Should the previous screen get hidden when showing this screen?
 		public bool hidePrevious;
 
